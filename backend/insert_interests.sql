@@ -1,0 +1,20 @@
+INSERT INTO interests (label, emoji, slug) VALUES 
+('Kitap Kurdu', '📖', 'reading'),
+('Gezgin', '✈️', 'traveling'),
+('Oyuncu', '🎮', 'gaming'),
+('Müzisyen', '🎸', 'music_making'),
+('Fotoğrafçı', '📷', 'photography'),
+('Yoga & Meditasyon', '🧘', 'yoga'),
+('Dans', '💃', 'dancing'),
+('Teknoloji', '💻', 'tech'),
+('Moda', '👗', 'fashion'),
+('Sürdürülebilirlik', '🌱', 'sustainability'),
+('Hayvansever', '🐾', 'pets'),
+('Şarap Tadımı', '🍷', 'wine'),
+('Kampçılık', '🔥', 'camping'),
+('Yüzme', '🏊', 'swimming'),
+('Koleksiyoncu', '🏺', 'collecting'),
+('Kedi Sever', '🐱', 'cat_lover'),
+('Köpek Sever', '🐶', 'dog_lover'),
+('Sinema', '📽️', 'cinema')
+ON CONFLICT (slug) DO NOTHING;
