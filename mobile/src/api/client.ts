@@ -8,15 +8,25 @@ export const API_URL = CONFIG.API_URL;
 
 const client = axios.create({
     baseURL: API_URL,
+    timeout: 10000, // 10 saniye timeout ekle (ilerlememe sorununu anlamak için)
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
 client.interceptors.request.use(async (config) => {
-    const token = await AsyncStorage.getItem('accessToken');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    // Axios leading slash behavior fix: Prepend path correctly to baseURL
+    if (config.url && config.url.startsWith('/')) {
+        config.url = config.url.substring(1);
+    }
+
+    try {
+        const token = await AsyncStorage.getItem('accessToken');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+    } catch (e) {
+        console.error('AsyncStorage error in interceptor:', e);
     }
     return config;
 });

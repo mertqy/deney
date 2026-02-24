@@ -1,6 +1,13 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+console.log('Checking environment variables...');
+if (process.env.DATABASE_URL) {
+    console.log('✓ DATABASE_URL found.');
+} else {
+    console.warn('! DATABASE_URL NOT FOUND. Using local defaults.');
+}
+
 export const config = {
     PORT: process.env.PORT || 3000,
     JWT_SECRET: process.env.JWT_SECRET || 'supersecret123',

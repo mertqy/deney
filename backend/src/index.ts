@@ -6,14 +6,26 @@ import { config } from './config';
 import { errorMiddleware } from './middleware/errorMiddleware';
 
 
+console.log('--- Server Starting ---');
 const app = express();
 const server = http.createServer(app);
+
+// Global error handlers
+process.on('uncaughtException', (err) => {
+    console.error('CRITICAL: Uncaught Exception:', err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('CRITICAL: Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+console.log('Initializing Socket.IO...');
 const io = new Server(server, {
     cors: {
         origin: '*',
     }
 });
 
+console.log('Configuring middleware...');
 app.set('io', io);
 
 import authRoutes from './routes/auth';
@@ -57,7 +69,12 @@ io.on('connection', (socket) => {
 });
 
 const PORT = config.PORT;
+console.log(`Attempting to listen on port ${PORT}...`);
 server.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
+    console.log('==========================================');
+    console.log(`🚀 JUNTO API READY`);
+    console.log(`📡 Port: ${PORT}`);
+    console.log(`🌍 Node Env: ${process.env.NODE_ENV}`);
+    console.log('==========================================');
 });
 
