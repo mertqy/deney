@@ -19,7 +19,7 @@ export async function findMatch(searchId: string, io?: Server) {
     const s = currentSearchRes.rows[0];
 
     // 2. Get current user's trust score and interests
-    const userRes = await query('SELECT trust_score FROM users WHERE id = $1', [s.user_id]);
+    const userRes = await query('SELECT trust_score, expo_push_token FROM users WHERE id = $1', [s.user_id]);
     const trustScore = userRes.rows[0]?.trust_score || 0;
 
     // Shadow ban check: If the initiating user is below 20, don't even look for matches
@@ -102,8 +102,9 @@ export async function findMatch(searchId: string, io?: Server) {
     }
 
     // 8. Send Push Notifications
-    if (s.expo_push_token) {
-      sendPushNotification(s.expo_push_token, 'Eşleşme Bulundu! 🤩', `${bestMatch.activity_slug} için biriyle eşleştin.`);
+    const currentUserPushToken = userRes.rows[0]?.expo_push_token;
+    if (currentUserPushToken) {
+      sendPushNotification(currentUserPushToken, 'Eşleşme Bulundu! 🤩', `${bestMatch.activity_slug} için biriyle eşleştin.`);
     }
     if (bestMatch.expo_push_token) {
       sendPushNotification(bestMatch.expo_push_token, 'Eşleşme Bulundu! 🤩', `${s.activity_slug} için biriyle eşleştin.`);
