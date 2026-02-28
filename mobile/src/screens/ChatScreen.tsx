@@ -108,7 +108,7 @@ export const ChatScreen = ({ navigation, route }: Props) => {
             />
 
             <View style={styles.inputArea}>
-                <TextInput
+                <TextInput placeholderTextColor={Colors.textSecondary} 
                     style={styles.input}
                     placeholder="Mesaj yaz..."
                     value={text}
@@ -136,7 +136,7 @@ const getStyles = (Colors: any) => StyleSheet.create({
         paddingTop: 60,
         paddingBottom: 16,
         paddingHorizontal: 20,
-        backgroundColor: '#FFF',
+        backgroundColor: Colors.bgCard,
         borderBottomWidth: 1,
         borderBottomColor: Colors.border,
     },
@@ -157,7 +157,7 @@ const getStyles = (Colors: any) => StyleSheet.create({
     },
     theirMessage: {
         alignSelf: 'flex-start',
-        backgroundColor: '#FFF',
+        backgroundColor: Colors.bgCard,
         borderBottomLeftRadius: 4,
         borderWidth: 1,
         borderColor: Colors.border,
@@ -177,7 +177,7 @@ const getStyles = (Colors: any) => StyleSheet.create({
         flexDirection: 'row',
         padding: 16,
         paddingBottom: Platform.OS === 'ios' ? 32 : 16,
-        backgroundColor: '#FFF',
+        backgroundColor: Colors.bgCard,
         borderTopWidth: 1,
         borderTopColor: Colors.border,
         alignItems: 'center',
@@ -190,7 +190,8 @@ const getStyles = (Colors: any) => StyleSheet.create({
         paddingVertical: 8,
         maxHeight: 100,
         ...Typography.labelMd,
-    },
+    color: Colors.textPrimary,
+},
     sendButton: {
         marginLeft: 12,
         width: 44,

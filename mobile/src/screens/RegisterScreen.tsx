@@ -51,14 +51,14 @@ export const RegisterScreen = ({ navigation }: RegisterProps) => {
             <Text style={styles.subtitle}>Yeni deneyimlere hazır ol.</Text>
 
             <View style={styles.inputContainer}>
-                <TextInput
+                <TextInput placeholderTextColor={Colors.textSecondary} 
                     style={styles.input}
                     placeholder="Ad Soyad"
                     value={name}
                     onChangeText={setName}
                     autoCapitalize="words"
                 />
-                <TextInput
+                <TextInput placeholderTextColor={Colors.textSecondary} 
                     style={styles.input}
                     placeholder="E-posta"
                     value={email}
@@ -88,7 +88,7 @@ export const RegisterScreen = ({ navigation }: RegisterProps) => {
                     />
                 )}
 
-                <TextInput
+                <TextInput placeholderTextColor={Colors.textSecondary} 
                     style={styles.input}
                     placeholder="Şifre"
                     value={password}
@@ -137,7 +137,8 @@ const getStyles = (Colors: any) => StyleSheet.create({
         borderWidth: 1,
         borderColor: Colors.border,
         ...Typography.labelMd,
-    },
+    color: Colors.textPrimary,
+},
     button: {
         backgroundColor: Colors.primary,
         padding: 18,

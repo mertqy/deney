@@ -125,7 +125,7 @@ const getStyles = (Colors: any) => StyleSheet.create({
         padding: 16,
         marginHorizontal: 16,
         marginBottom: 12,
-        backgroundColor: '#FFF',
+        backgroundColor: Colors.bgCard,
         borderRadius: 16,
         alignItems: 'center',
         shadowColor: '#000',

@@ -42,7 +42,7 @@ export const LoginScreen = ({ navigation }: LoginProps) => {
             <Text style={styles.subtitle}>Tekrar hoş geldin.</Text>
 
             <View style={styles.inputContainer}>
-                <TextInput
+                <TextInput placeholderTextColor={Colors.textSecondary} 
                     style={styles.input}
                     placeholder="E-posta"
                     value={email}
@@ -50,7 +50,7 @@ export const LoginScreen = ({ navigation }: LoginProps) => {
                     autoCapitalize="none"
                     keyboardType="email-address"
                 />
-                <TextInput
+                <TextInput placeholderTextColor={Colors.textSecondary} 
                     style={styles.input}
                     placeholder="Şifre"
                     value={password}
@@ -99,7 +99,8 @@ const getStyles = (Colors: any) => StyleSheet.create({
         borderWidth: 1,
         borderColor: Colors.border,
         ...Typography.labelMd,
-    },
+    color: Colors.textPrimary,
+},
     button: {
         backgroundColor: Colors.primary,
         padding: 18,

@@ -236,7 +236,7 @@ export const SearchScreen = ({ navigation }: Props) => {
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>Konum Değiştir</Text>
-                        <TextInput
+                        <TextInput placeholderTextColor={Colors.textSecondary} 
                             style={styles.modalInput}
                             placeholder="Şehir veya ilçe adı girin..."
                             value={tempLocationSearch}
@@ -349,7 +349,7 @@ const getStyles = (Colors: any) => StyleSheet.create({
         padding: 24,
     },
     modalContent: {
-        backgroundColor: '#FFF',
+        backgroundColor: Colors.bgCard,
         borderRadius: 28,
         padding: 24,
         shadowColor: '#000',

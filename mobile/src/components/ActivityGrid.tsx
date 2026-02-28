@@ -75,7 +75,7 @@ const getStyles = (Colors: any) => StyleSheet.create({
         borderColor: 'rgba(175, 125, 97, 0.05)',
     },
     cardSelected: {
-        backgroundColor: '#FFF',
+        backgroundColor: Colors.bgCard,
         borderColor: Colors.primary,
         borderWidth: 1,
         elevation: 5,

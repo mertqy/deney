@@ -163,7 +163,7 @@ export const EditProfileScreen = ({ navigation }: Props) => {
             <View style={styles.form}>
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>Ad Soyad</Text>
-                    <TextInput
+                    <TextInput placeholderTextColor={Colors.textSecondary} 
                         style={styles.input}
                         value={name}
                         onChangeText={setName}
@@ -173,7 +173,7 @@ export const EditProfileScreen = ({ navigation }: Props) => {
 
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>Biyografi</Text>
-                    <TextInput
+                    <TextInput placeholderTextColor={Colors.textSecondary} 
                         style={[styles.input, styles.textArea]}
                         value={bio}
                         onChangeText={setBio}
@@ -185,7 +185,7 @@ export const EditProfileScreen = ({ navigation }: Props) => {
 
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>Şehir</Text>
-                    <TextInput
+                    <TextInput placeholderTextColor={Colors.textSecondary} 
                         style={styles.input}
                         value={locationCity}
                         onChangeText={setLocationCity}
@@ -246,7 +246,7 @@ const getStyles = (Colors: any) => StyleSheet.create({
         paddingHorizontal: 20,
         paddingTop: 60,
         paddingBottom: 20,
-        backgroundColor: '#FFF',
+        backgroundColor: Colors.bgCard,
     },
     title: {
         ...Typography.labelLg,
@@ -274,17 +274,19 @@ const getStyles = (Colors: any) => StyleSheet.create({
         marginLeft: 4,
     },
     input: {
-        backgroundColor: '#FFF',
+        backgroundColor: Colors.bgCard,
         borderRadius: 12,
         padding: 16,
         borderWidth: 1,
         borderColor: Colors.border,
         ...Typography.labelMd,
-    },
+    color: Colors.textPrimary,
+},
     textArea: {
         height: 120,
         textAlignVertical: 'top',
-    },
+    color: Colors.textPrimary,
+},
     deleteButton: {
         marginTop: 40,
         padding: 16,
@@ -297,7 +299,7 @@ const getStyles = (Colors: any) => StyleSheet.create({
     avatarSection: {
         alignItems: 'center',
         paddingVertical: 30,
-        backgroundColor: '#FFF',
+        backgroundColor: Colors.bgCard,
     },
     avatarLarge: {
         width: 120,
@@ -331,7 +333,7 @@ const getStyles = (Colors: any) => StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 8,
         borderRadius: 20,
-        backgroundColor: '#FFF',
+        backgroundColor: Colors.bgCard,
         borderWidth: 1,
         borderColor: Colors.border,
         marginRight: 8,

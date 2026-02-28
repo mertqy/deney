@@ -118,7 +118,7 @@ const getStyles = (Colors: any) => StyleSheet.create({
     header: {
         paddingTop: 80,
         paddingBottom: 40,
-        backgroundColor: '#FFF',
+        backgroundColor: Colors.bgCard,
         alignItems: 'center',
         borderBottomLeftRadius: 32,
         borderBottomRightRadius: 32,
@@ -143,7 +143,7 @@ const getStyles = (Colors: any) => StyleSheet.create({
         backgroundColor: Colors.bgMain,
         marginBottom: 16,
         borderWidth: 4,
-        borderColor: '#FFF',
+        borderColor: Colors.bgCard,
     },
     userName: {
         ...Typography.displaySm,
@@ -188,7 +188,7 @@ const getStyles = (Colors: any) => StyleSheet.create({
         marginBottom: 12,
     },
     card: {
-        backgroundColor: '#FFF',
+        backgroundColor: Colors.bgCard,
         padding: 16,
         borderRadius: 16,
         borderWidth: 1,
@@ -223,7 +223,7 @@ const getStyles = (Colors: any) => StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 8,
         borderRadius: 20,
-        backgroundColor: '#FFF',
+        backgroundColor: Colors.bgCard,
         borderWidth: 1,
         borderColor: Colors.border,
         marginRight: 8,
