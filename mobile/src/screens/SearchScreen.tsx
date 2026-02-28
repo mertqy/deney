@@ -79,7 +79,7 @@ export const SearchScreen = ({ navigation }: Props) => {
         try {
             const payload = {
                 activity_slug: selectedActivity,
-                desired_date: date.toISOString().split('T')[0],
+                desired_date: date.toLocaleDateString('en-CA'),
                 time_start: formatTime(startTime),
                 time_end: formatTime(endTime),
                 lat: location?.lat || 39.9334,

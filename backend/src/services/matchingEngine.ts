@@ -50,8 +50,9 @@ export async function findMatch(searchId: string, io?: Server) {
 
     console.log(`Found ${candidatesRes.rows.length} potential candidates`);
     if (candidatesRes.rows.length === 0) {
-      // Log why no candidates were found if possible?
-      // Just a general "No candidates" is fine for now.
+      // DEBUG: Check if there are ANY other searches for the same activity
+      const allSearches = await query(`SELECT count(*) FROM activity_searches WHERE activity_slug = $1 AND status = 'searching'`, [s.activity_slug]);
+      console.log(`Total active searches for ${s.activity_slug}: ${allSearches.rows[0].count}`);
       return;
     }
 
