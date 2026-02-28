@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
-import { Colors } from '../constants/colors';
+import { useThemeColor } from '../constants/colors';
 import { Typography } from '../constants/typography';
 import client from '../api/client';
 import { useSocket } from '../hooks/useSocket';
@@ -13,6 +13,8 @@ type Props = {
 };
 
 export const ChatsScreen = ({ navigation }: Props) => {
+    const Colors = useThemeColor();
+    const styles = getStyles(Colors);
     const [conversations, setConversations] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const socket = useSocket();
@@ -106,7 +108,7 @@ export const ChatsScreen = ({ navigation }: Props) => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors: any) => StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.bgMain,

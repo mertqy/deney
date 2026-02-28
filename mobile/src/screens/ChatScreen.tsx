@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
-import { Colors } from '../constants/colors';
+import { useThemeColor } from '../constants/colors';
 import { Typography } from '../constants/typography';
 import { useAuth } from '../hooks/AuthContext';
 import { useSocket } from '../hooks/useSocket';
@@ -15,6 +15,8 @@ type Props = {
 };
 
 export const ChatScreen = ({ navigation, route }: Props) => {
+    const Colors = useThemeColor();
+    const styles = getStyles(Colors);
     const { conversationId } = route.params;
     const { user } = useAuth();
     const socket = useSocket();
@@ -122,7 +124,7 @@ export const ChatScreen = ({ navigation, route }: Props) => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors: any) => StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.bgMain,

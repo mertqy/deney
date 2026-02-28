@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert,
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 
-import { Colors } from '../constants/colors';
+import { useThemeColor } from '../constants/colors';
 import { Typography } from '../constants/typography';
 import { useProfile } from '../hooks/useProfile';
 import { useAuth } from '../hooks/AuthContext';
@@ -15,6 +15,8 @@ type Props = {
 };
 
 export const EditProfileScreen = ({ navigation }: Props) => {
+    const Colors = useThemeColor();
+    const styles = getStyles(Colors);
     const { profile, loading, updateProfile, deleteAccount, updateInterests, fetchAllInterests } = useProfile();
     const { logout } = useAuth();
 
@@ -232,7 +234,7 @@ export const EditProfileScreen = ({ navigation }: Props) => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors: any) => StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.bgMain,

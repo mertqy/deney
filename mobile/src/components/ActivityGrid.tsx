@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Colors } from '../constants/colors';
+import { useThemeColor } from '../constants/colors';
 import { Typography } from '../constants/typography';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -21,6 +21,8 @@ type Props = {
 };
 
 export const ActivityGrid = ({ selectedSlug, onSelect }: Props) => {
+    const Colors = useThemeColor();
+    const styles = getStyles(Colors);
     return (
         <View style={styles.grid}>
             {ACTIVITIES.map((act) => {
@@ -48,7 +50,7 @@ export const ActivityGrid = ({ selectedSlug, onSelect }: Props) => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors: any) => StyleSheet.create({
     grid: {
         flexDirection: 'row',
         flexWrap: 'wrap',

@@ -4,7 +4,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { useAuth } from '../hooks/AuthContext';
 import client from '../api/client';
-import { Colors } from '../constants/colors';
+import { useThemeColor } from '../constants/colors';
 import { Typography } from '../constants/typography';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -13,6 +13,8 @@ type RegisterProps = {
 };
 
 export const RegisterScreen = ({ navigation }: RegisterProps) => {
+    const Colors = useThemeColor();
+    const styles = getStyles(Colors);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -106,7 +108,7 @@ export const RegisterScreen = ({ navigation }: RegisterProps) => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors: any) => StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.bgMain,

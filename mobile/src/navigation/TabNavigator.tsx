@@ -3,12 +3,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SearchScreen } from '../screens/SearchScreen';
 import { ChatsScreen } from '../screens/ChatsScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
-import { Colors } from '../constants/colors';
+import { useThemeColor } from '../constants/colors';
 import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
 export const TabNavigator = () => {
+    const Colors = useThemeColor();
     return (
         <Tab.Navigator
             screenOptions={{

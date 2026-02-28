@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated, Easing } from 'react-native';
-import { Colors } from '../constants/colors';
+import { useThemeColor } from '../constants/colors';
 import { Typography } from '../constants/typography';
 import { useMatchSearch } from '../hooks/useMatchSearch';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,6 +15,8 @@ type Props = {
 };
 
 export const SearchingScreen = ({ navigation, route }: Props) => {
+    const Colors = useThemeColor();
+    const styles = getStyles(Colors);
     const { search_id } = route.params;
     const [pulseAnim] = useState(new Animated.Value(0));
 
@@ -88,7 +90,7 @@ export const SearchingScreen = ({ navigation, route }: Props) => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors: any) => StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.bgSoft,

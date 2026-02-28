@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator } from 'react-native';
-import { Colors } from '../constants/colors';
+import { useThemeColor } from '../constants/colors';
 import { Typography } from '../constants/typography';
 import { useAuth } from '../hooks/AuthContext';
 import { useProfile } from '../hooks/useProfile';
@@ -12,6 +12,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 
 export const ProfileScreen = () => {
+    const Colors = useThemeColor();
+    const styles = getStyles(Colors);
     const { logout } = useAuth();
     const { profile, loading, error, refreshProfile } = useProfile();
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -108,7 +110,7 @@ export const ProfileScreen = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors: any) => StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.bgMain,

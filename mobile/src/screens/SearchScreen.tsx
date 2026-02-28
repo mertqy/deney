@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Modal, TextInput } from 'react-native';
 
-import { Colors } from '../constants/colors';
+import { useThemeColor } from '../constants/colors';
 import { Typography } from '../constants/typography';
 import { useAuth } from '../hooks/AuthContext';
 import { ActivityGrid } from '../components/ActivityGrid';
@@ -19,6 +19,8 @@ type Props = {
 };
 
 export const SearchScreen = ({ navigation }: Props) => {
+    const Colors = useThemeColor();
+    const styles = getStyles(Colors);
     const { user } = useAuth();
     const [selectedActivity, setSelectedActivity] = useState<string | null>(null);
 
@@ -265,7 +267,7 @@ export const SearchScreen = ({ navigation }: Props) => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors: any) => StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.bgSoft,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Colors } from '../constants/colors';
+import { useThemeColor } from '../constants/colors';
 import { Typography } from '../constants/typography';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -10,6 +10,8 @@ type Props = {
 };
 
 export const MatchConfirmedScreen = ({ navigation, route }: Props) => {
+    const Colors = useThemeColor();
+    const styles = getStyles(Colors);
     const { conversationId } = route.params;
 
     return (
@@ -35,7 +37,7 @@ export const MatchConfirmedScreen = ({ navigation, route }: Props) => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors: any) => StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.bgMain,

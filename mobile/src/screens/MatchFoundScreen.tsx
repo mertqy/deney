@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
-import { Colors } from '../constants/colors';
+import { useThemeColor } from '../constants/colors';
 import { Typography } from '../constants/typography';
 import client from '../api/client';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -15,6 +15,8 @@ type Props = {
 };
 
 export const MatchFoundScreen = ({ navigation, route }: Props) => {
+    const Colors = useThemeColor();
+    const styles = getStyles(Colors);
     const { matchId } = route.params;
     const { user } = useAuth();
     const socket = useSocket();
@@ -128,7 +130,7 @@ export const MatchFoundScreen = ({ navigation, route }: Props) => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors: any) => StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.bgDark,

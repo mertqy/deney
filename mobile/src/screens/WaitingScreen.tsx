@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { Colors } from '../constants/colors';
+import { useThemeColor } from '../constants/colors';
 import { Typography } from '../constants/typography';
 import { useSocket } from '../hooks/useSocket';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -11,6 +11,8 @@ type Props = {
 };
 
 export const WaitingScreen = ({ navigation, route }: Props) => {
+    const Colors = useThemeColor();
+    const styles = getStyles(Colors);
     const { matchId } = route.params;
     const socket = useSocket();
 
@@ -37,7 +39,7 @@ export const WaitingScreen = ({ navigation, route }: Props) => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors: any) => StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.bgDark,

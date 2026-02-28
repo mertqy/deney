@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { useAuth } from '../hooks/AuthContext';
 import client from '../api/client';
-import { Colors } from '../constants/colors';
+import { useThemeColor } from '../constants/colors';
 import { Typography } from '../constants/typography';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -11,6 +11,8 @@ type LoginProps = {
 };
 
 export const LoginScreen = ({ navigation }: LoginProps) => {
+    const Colors = useThemeColor();
+    const styles = getStyles(Colors);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -36,7 +38,7 @@ export const LoginScreen = ({ navigation }: LoginProps) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Junto</Text>
+            <Text style={styles.title}>Meetiva</Text>
             <Text style={styles.subtitle}>Tekrar hoş geldin.</Text>
 
             <View style={styles.inputContainer}>
@@ -68,7 +70,7 @@ export const LoginScreen = ({ navigation }: LoginProps) => {
     );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (Colors: any) => StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.bgMain,
