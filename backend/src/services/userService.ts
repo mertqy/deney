@@ -1,10 +1,13 @@
 import { query } from '../db';
 
 export const UserService = {
-    async getProfile(userId: string) {
+    async getProfile(userId: string, includePrivate: boolean = false) {
+        const fields = includePrivate
+            ? 'id, name, email, birth_date, bio, avatar_url, is_verified, trust_score, location_city, created_at'
+            : 'id, name, birth_date, bio, avatar_url, is_verified, trust_score, location_city, created_at';
+
         const result = await query(
-            `SELECT id, name, email, birth_date, bio, avatar_url, is_verified,
-              trust_score, location_city, created_at
+            `SELECT ${fields}
              FROM users WHERE id = $1`,
             [userId]
         );

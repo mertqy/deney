@@ -10,7 +10,7 @@ const router = Router();
 // GET /api/users/me
 router.get('/me', authenticate, async (req: AuthRequest, res: ExpressResponse, next: NextFunction) => {
     try {
-        const user = await UserService.getProfile(req.userId!);
+        const user = await UserService.getProfile(req.userId!, true);
         if (!user) return res.status(404).json({ error: 'User not found' });
         return res.json(user);
     } catch (err) {

@@ -8,10 +8,17 @@ if (process.env.DATABASE_URL) {
     console.warn('! DATABASE_URL NOT FOUND. Using local defaults.');
 }
 
+const isProduction = process.env.NODE_ENV === 'production';
+const jwtSecret = process.env.JWT_SECRET;
+
+if (isProduction && !jwtSecret) {
+    throw new Error('FATAL: JWT_SECRET environment variable is required in production!');
+}
+
 export const config = {
     PORT: process.env.PORT || 3000,
-    JWT_SECRET: process.env.JWT_SECRET || 'supersecret123',
-    JWT_REFRESH_SECRET: (process.env.JWT_SECRET || 'supersecret123') + '_refresh',
+    JWT_SECRET: jwtSecret || 'supersecret123',
+    JWT_REFRESH_SECRET: (jwtSecret || 'supersecret123') + '_refresh',
     DB: process.env.DATABASE_URL ? {
         connectionString: process.env.DATABASE_URL,
         ssl: { rejectUnauthorized: false } // Required for many hosted DBs like Render/Heroku

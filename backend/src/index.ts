@@ -18,10 +18,28 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('CRITICAL: Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
+import jwt from 'jsonwebtoken';
+
 console.log('Initializing Socket.IO...');
 const io = new Server(server, {
     cors: {
         origin: '*',
+    }
+});
+
+// Socket.IO Authentication Middleware
+io.use((socket, next) => {
+    const token = socket.handshake.auth.token;
+    if (!token) {
+        return next(new Error('Authentication error: Token missing'));
+    }
+
+    try {
+        const decoded = jwt.verify(token, config.JWT_SECRET) as { userId: string };
+        (socket as any).userId = decoded.userId;
+        next();
+    } catch (err) {
+        return next(new Error('Authentication error: Invalid token'));
     }
 });
 
@@ -39,7 +57,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-    res.send('Junto API is running.');
+    res.send('Meetiva API is running.'); // Updated name here too
 });
 
 // Register routes
@@ -55,13 +73,12 @@ app.use(errorMiddleware);
 
 
 io.on('connection', (socket) => {
-    console.log('User connected:', socket.id);
+    const userId = (socket as any).userId;
+    console.log('User connected:', socket.id, 'UserId:', userId);
 
-    // Users should join a room with their userId to receive private notifications
-    socket.on('join', (userId: string) => {
-        socket.join(userId);
-        console.log(`User ${userId} joined room`);
-    });
+    // Securely join the user's specific room
+    socket.join(userId);
+    console.log(`User ${userId} joined room securely`);
 
     socket.on('disconnect', () => {
         console.log('User disconnected:', socket.id);
