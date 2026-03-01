@@ -55,6 +55,7 @@ import conversationRoutes from './routes/conversations';
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static('public'));
 
 app.get('/', (req, res) => {
     res.send('Meetiva API is running.'); // Updated name here too
