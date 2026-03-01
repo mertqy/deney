@@ -129,4 +129,46 @@ router.post('/:id/messages', authenticate, async (req: AuthRequest, res: Respons
     }
 });
 
+import { MatchService } from '../services/matchService';
+
+// POST /api/conversations/:id/unmatch
+router.post('/:id/unmatch', authenticate, async (req: AuthRequest, res: Response) => {
+    try {
+        const verifyUser = await query(`SELECT match_id FROM conversations WHERE id = $1`, [req.params.id]);
+        if (verifyUser.rows.length === 0) return res.status(404).json({ error: 'Conversation not found' });
+
+        const matchId = verifyUser.rows[0].match_id;
+        const io = req.app.get('io');
+
+        await MatchService.unmatchUser(matchId, req.userId as string, io);
+        return res.json({ message: 'Eşleşme kaldırıldı.' });
+    } catch (err: any) {
+        if (err.message === 'Unauthorized') return res.status(403).json({ error: err.message });
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// POST /api/conversations/:id/ban
+router.post('/:id/ban', authenticate, async (req: AuthRequest, res: Response) => {
+    try {
+        const { reason } = req.body;
+        const convRes = await query(`
+            SELECT c.match_id, m.user_a_id, m.user_b_id 
+            FROM conversations c 
+            JOIN matches m ON c.match_id = m.id 
+            WHERE c.id = $1`, [req.params.id]);
+
+        if (convRes.rows.length === 0) return res.status(404).json({ error: 'Conversation not found' });
+
+        const { match_id, user_a_id, user_b_id } = convRes.rows[0];
+        const blockedId = user_a_id === req.userId ? user_b_id : user_a_id;
+        const io = req.app.get('io');
+
+        await MatchService.banUser(req.userId as string, blockedId, reason || 'Inappropriate behavior in chat', match_id, io);
+        return res.json({ message: 'Kullanıcı engellendi.' });
+    } catch (err: any) {
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 export default router;

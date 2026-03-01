@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator, Alert } from 'react-native';
 import { useThemeColor } from '../constants/colors';
 import { Typography } from '../constants/typography';
 import { useAuth } from '../hooks/AuthContext';
@@ -34,12 +34,19 @@ export const ChatScreen = ({ navigation, route }: Props) => {
                     setMessages(prev => [msg, ...prev]);
                 }
             });
+            socket.on('chat_unmatched', () => {
+                Alert.alert('Bilgi', 'Karşı taraf sohbeti sonlandırdı.');
+                navigation.navigate('Main');
+            });
         }
 
         return () => {
-            if (socket) socket.off('new_message');
+            if (socket) {
+                socket.off('new_message');
+                socket.off('chat_unmatched');
+            }
         };
-    }, [socket, conversationId]);
+    }, [socket, conversationId, navigation]);
 
     const fetchMessages = async () => {
         try {
@@ -50,6 +57,50 @@ export const ChatScreen = ({ navigation, route }: Props) => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleOptions = () => {
+        Alert.alert(
+            'Sohbet Seçenekleri',
+            'Ne yapmak istersiniz?',
+            [
+                { text: 'Vazgeç', style: 'cancel' },
+                { text: 'Eşleşmeyi Kaldır', onPress: handleUnmatch, style: 'destructive' },
+                { text: 'Şikayet Et & Engelle', onPress: handleBan, style: 'destructive' }
+            ]
+        );
+    };
+
+    const handleUnmatch = async () => {
+        Alert.alert('Emin misiniz?', 'Eşleşmeyi tamamen kaldırmak istediğinize emin misiniz? Bu işlem geri alınamaz.', [
+            { text: 'Vazgeç', style: 'cancel' },
+            {
+                text: 'Kaldır', style: 'destructive', onPress: async () => {
+                    try {
+                        await client.post(`/conversations/${conversationId}/unmatch`);
+                        navigation.navigate('Main');
+                    } catch (e) {
+                        Alert.alert('Hata', 'İşlem başarısız.');
+                    }
+                }
+            }
+        ]);
+    };
+
+    const handleBan = async () => {
+        Alert.alert('Şikayet Et', 'Bu kullanıcıyı engellemek ve şikayet etmek istediğinize emin misiniz? Karşınıza bir daha çıkmayacaktır.', [
+            { text: 'Vazgeç', style: 'cancel' },
+            {
+                text: 'Engelle', style: 'destructive', onPress: async () => {
+                    try {
+                        await client.post(`/conversations/${conversationId}/ban`, { reason: 'Kullanıcı rapor edildi.' });
+                        navigation.navigate('Main');
+                    } catch (e) {
+                        Alert.alert('Hata', 'İşlem başarısız.');
+                    }
+                }
+            }
+        ]);
     };
 
     const handleSend = async () => {
@@ -95,7 +146,10 @@ export const ChatScreen = ({ navigation, route }: Props) => {
                 </TouchableOpacity>
 
                 <Text style={styles.headerTitle}>Sohbet</Text>
-                <View style={{ width: 24 }} />
+
+                <TouchableOpacity onPress={handleOptions}>
+                    <Ionicons name="ellipsis-vertical" size={24} color={Colors.textPrimary} />
+                </TouchableOpacity>
             </View>
 
             <FlatList
@@ -108,7 +162,7 @@ export const ChatScreen = ({ navigation, route }: Props) => {
             />
 
             <View style={styles.inputArea}>
-                <TextInput placeholderTextColor={Colors.textSecondary} 
+                <TextInput placeholderTextColor={Colors.textSecondary}
                     style={styles.input}
                     placeholder="Mesaj yaz..."
                     value={text}
@@ -190,8 +244,8 @@ const getStyles = (Colors: any) => StyleSheet.create({
         paddingVertical: 8,
         maxHeight: 100,
         ...Typography.labelMd,
-    color: Colors.textPrimary,
-},
+        color: Colors.textPrimary,
+    },
     sendButton: {
         marginLeft: 12,
         width: 44,

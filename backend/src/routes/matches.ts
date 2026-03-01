@@ -75,5 +75,31 @@ router.post('/:id/decline', authenticate, async (req: AuthRequest, res: ExpressR
     }
 });
 
+// POST /api/matches/:id/unmatch
+router.post('/:id/unmatch', authenticate, async (req: AuthRequest, res: ExpressResponse, next: NextFunction) => {
+    try {
+        const io = req.app.get('io');
+        await MatchService.unmatchUser(req.params.id as string, req.userId as string, io);
+        return res.json({ message: 'Eşleşme başarıyla kaldırıldı.' });
+    } catch (err: any) {
+        if (err.message === 'Match not found') return res.status(404).json({ error: err.message });
+        if (err.message === 'Unauthorized') return res.status(403).json({ error: err.message });
+        next(err);
+    }
+});
+
+// POST /api/matches/:id/ban
+router.post('/:id/ban', authenticate, async (req: AuthRequest, res: ExpressResponse, next: NextFunction) => {
+    try {
+        const { blockedId, reason } = req.body;
+        if (!blockedId) return res.status(400).json({ error: 'blockedId is required' });
+
+        const io = req.app.get('io');
+        await MatchService.banUser(req.userId as string, blockedId, reason || 'Inappropriate behavior', req.params.id as string, io);
+        return res.json({ message: 'Kullanıcı engellendi ve şikayet edildi.' });
+    } catch (err: any) {
+        next(err);
+    }
+});
 
 export default router;

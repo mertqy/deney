@@ -108,5 +108,48 @@ export const MatchService = {
             const otherUserId = match.user_a_id === userId ? match.user_b_id : match.user_a_id;
             appIo.to(otherUserId).emit('match_declined', { matchId: match.id });
         }
+    },
+
+    async unmatchUser(matchId: string, userId: string, appIo?: Server) {
+        const matchRes = await query(`SELECT * FROM matches WHERE id = $1`, [matchId]);
+        if (matchRes.rows.length === 0) throw new Error('Match not found');
+
+        const match = matchRes.rows[0];
+        if (match.user_a_id !== userId && match.user_b_id !== userId) throw new Error('Unauthorized');
+
+        await query(`UPDATE matches SET status = 'unmatched' WHERE id = $1`, [match.id]);
+
+        // Ensure their searches are also cancelled so they don't pop up immediately again
+        await query(`UPDATE activity_searches SET status = 'cancelled' WHERE id IN ($1, $2)`, [match.search_a_id, match.search_b_id]);
+
+        if (appIo) {
+            const otherUserId = match.user_a_id === userId ? match.user_b_id : match.user_a_id;
+            appIo.to(otherUserId).emit('chat_unmatched', { matchId: match.id });
+        }
+    },
+
+    async banUser(blockerId: string, blockedId: string, reason: string = '', matchId?: string, appIo?: Server) {
+        await query(
+            `INSERT INTO user_blocks (blocker_id, blocked_id, reason) 
+             VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`,
+            [blockerId, blockedId, reason]
+        );
+
+        // Lower the trust score of the blocked user significantly
+        await query(`UPDATE users SET trust_score = GREATEST(0, trust_score - 10) WHERE id = $1`, [blockedId]);
+
+        // If a match context is provided, unmatch them
+        if (matchId) {
+            const matchRes = await query(`SELECT * FROM matches WHERE id = $1`, [matchId]);
+            if (matchRes.rows.length > 0) {
+                const match = matchRes.rows[0];
+                await query(`UPDATE matches SET status = 'banned' WHERE id = $1`, [match.id]);
+                await query(`UPDATE activity_searches SET status = 'cancelled' WHERE id IN ($1, $2)`, [match.search_a_id, match.search_b_id]);
+
+                if (appIo) {
+                    appIo.to(blockedId).emit('chat_unmatched', { matchId: match.id, reason: 'banned' });
+                }
+            }
+        }
     }
 };
