@@ -110,12 +110,24 @@ export const MatchService = {
         }
     },
 
-    async unmatchUser(matchId: string, userId: string, appIo?: Server) {
+    async unmatchUser(matchId: string, userId: string, reason: string = '', appIo?: Server) {
         const matchRes = await query(`SELECT * FROM matches WHERE id = $1`, [matchId]);
         if (matchRes.rows.length === 0) throw new Error('Match not found');
 
         const match = matchRes.rows[0];
         if (match.user_a_id !== userId && match.user_b_id !== userId) throw new Error('Unauthorized');
+
+        const otherUserId = match.user_a_id === userId ? match.user_b_id : match.user_a_id;
+
+        // Apply penalty based on reason
+        let penalty = 0;
+        if (reason === 'ghosting') penalty = 5;
+        else if (reason === 'changed_mind') penalty = 2; // minor penalty for flaky behavior
+        else if (reason === 'inactive') penalty = 3;
+
+        if (penalty > 0) {
+            await query(`UPDATE users SET trust_score = GREATEST(0, trust_score - $1) WHERE id = $2`, [penalty, otherUserId]);
+        }
 
         await query(`UPDATE matches SET status = 'unmatched' WHERE id = $1`, [match.id]);
 
@@ -123,8 +135,7 @@ export const MatchService = {
         await query(`UPDATE activity_searches SET status = 'cancelled' WHERE id IN ($1, $2)`, [match.search_a_id, match.search_b_id]);
 
         if (appIo) {
-            const otherUserId = match.user_a_id === userId ? match.user_b_id : match.user_a_id;
-            appIo.to(otherUserId).emit('chat_unmatched', { matchId: match.id });
+            appIo.to(otherUserId).emit('chat_unmatched', { matchId: match.id, reason });
         }
     },
 
@@ -135,8 +146,12 @@ export const MatchService = {
             [blockerId, blockedId, reason]
         );
 
+        let penalty = 10;
+        if (reason === 'fake') penalty = 25;
+        else if (reason === 'inappropriate') penalty = 15;
+
         // Lower the trust score of the blocked user significantly
-        await query(`UPDATE users SET trust_score = GREATEST(0, trust_score - 10) WHERE id = $1`, [blockedId]);
+        await query(`UPDATE users SET trust_score = GREATEST(0, trust_score - $1) WHERE id = $2`, [penalty, blockedId]);
 
         // If a match context is provided, unmatch them
         if (matchId) {

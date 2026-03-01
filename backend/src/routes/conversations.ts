@@ -134,13 +134,14 @@ import { MatchService } from '../services/matchService';
 // POST /api/conversations/:id/unmatch
 router.post('/:id/unmatch', authenticate, async (req: AuthRequest, res: Response) => {
     try {
+        const { reason } = req.body;
         const verifyUser = await query(`SELECT match_id FROM conversations WHERE id = $1`, [req.params.id]);
         if (verifyUser.rows.length === 0) return res.status(404).json({ error: 'Conversation not found' });
 
         const matchId = verifyUser.rows[0].match_id;
         const io = req.app.get('io');
 
-        await MatchService.unmatchUser(matchId, req.userId as string, io);
+        await MatchService.unmatchUser(matchId, req.userId as string, reason || '', io);
         return res.json({ message: 'Eşleşme kaldırıldı.' });
     } catch (err: any) {
         if (err.message === 'Unauthorized') return res.status(403).json({ error: err.message });

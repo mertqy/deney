@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator, Alert, Modal } from 'react-native';
 import { useThemeColor } from '../constants/colors';
 import { Typography } from '../constants/typography';
 import { useAuth } from '../hooks/AuthContext';
@@ -23,6 +23,7 @@ export const ChatScreen = ({ navigation, route }: Props) => {
     const [messages, setMessages] = useState<any[]>([]);
     const [text, setText] = useState('');
     const [loading, setLoading] = useState(true);
+    const [showReasonModal, setShowReasonModal] = useState(false);
     const flatListRef = useRef<FlatList>(null);
 
     useEffect(() => {
@@ -60,47 +61,23 @@ export const ChatScreen = ({ navigation, route }: Props) => {
     };
 
     const handleOptions = () => {
-        Alert.alert(
-            'Sohbet Seçenekleri',
-            'Ne yapmak istersiniz?',
-            [
-                { text: 'Vazgeç', style: 'cancel' },
-                { text: 'Eşleşmeyi Kaldır', onPress: handleUnmatch, style: 'destructive' },
-                { text: 'Şikayet Et & Engelle', onPress: handleBan, style: 'destructive' }
-            ]
-        );
+        setShowReasonModal(true);
     };
 
-    const handleUnmatch = async () => {
-        Alert.alert('Emin misiniz?', 'Eşleşmeyi tamamen kaldırmak istediğinize emin misiniz? Bu işlem geri alınamaz.', [
-            { text: 'Vazgeç', style: 'cancel' },
-            {
-                text: 'Kaldır', style: 'destructive', onPress: async () => {
-                    try {
-                        await client.post(`/conversations/${conversationId}/unmatch`);
-                        navigation.navigate('Main');
-                    } catch (e) {
-                        Alert.alert('Hata', 'İşlem başarısız.');
-                    }
-                }
+    const submitEndChat = async (type: 'unmatch' | 'ban', reason: string) => {
+        setShowReasonModal(false);
+        try {
+            if (type === 'unmatch') {
+                await client.post(`/conversations/${conversationId}/unmatch`, { reason });
+                Alert.alert('Başarılı', 'Eşleşme kaldırıldı.');
+            } else {
+                await client.post(`/conversations/${conversationId}/ban`, { reason });
+                Alert.alert('Başarılı', 'Kullanıcı engellendi ve şikayet edildi.');
             }
-        ]);
-    };
-
-    const handleBan = async () => {
-        Alert.alert('Şikayet Et', 'Bu kullanıcıyı engellemek ve şikayet etmek istediğinize emin misiniz? Karşınıza bir daha çıkmayacaktır.', [
-            { text: 'Vazgeç', style: 'cancel' },
-            {
-                text: 'Engelle', style: 'destructive', onPress: async () => {
-                    try {
-                        await client.post(`/conversations/${conversationId}/ban`, { reason: 'Kullanıcı rapor edildi.' });
-                        navigation.navigate('Main');
-                    } catch (e) {
-                        Alert.alert('Hata', 'İşlem başarısız.');
-                    }
-                }
-            }
-        ]);
+            navigation.navigate('Main');
+        } catch (e) {
+            Alert.alert('Hata', 'İşlem başarısız.');
+        }
     };
 
     const handleSend = async () => {
@@ -174,6 +151,33 @@ export const ChatScreen = ({ navigation, route }: Props) => {
                 </TouchableOpacity>
 
             </View>
+            <Modal visible={showReasonModal} transparent animationType="slide">
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Sohbeti Bitirme Sebebi?</Text>
+
+                        <TouchableOpacity style={styles.reasonBtn} onPress={() => submitEndChat('unmatch', 'changed_mind')}>
+                            <Text style={styles.reasonText}>Fikrimi değiştirdim</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.reasonBtn} onPress={() => submitEndChat('unmatch', 'ghosting')}>
+                            <Text style={styles.reasonText}>Cevap vermiyor / İletişimsizlik</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={[styles.reasonBtn, { borderColor: Colors.error }]} onPress={() => submitEndChat('ban', 'inappropriate')}>
+                            <Text style={[styles.reasonText, { color: Colors.error }]}>😡 Rahatsız Edici Davranış / Hakaret</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={[styles.reasonBtn, { borderColor: Colors.error }]} onPress={() => submitEndChat('ban', 'fake')}>
+                            <Text style={[styles.reasonText, { color: Colors.error }]}>🚫 Sahte Profil / Spam</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.cancelModalBtn} onPress={() => setShowReasonModal(false)}>
+                            <Text style={styles.cancelModalText}>Vazgeç</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </KeyboardAvoidingView>
     );
 };
@@ -254,5 +258,43 @@ const getStyles = (Colors: any) => StyleSheet.create({
         backgroundColor: Colors.primaryLight,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'flex-end',
+    },
+    modalContent: {
+        backgroundColor: Colors.bgCard,
+        padding: 24,
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
+    },
+    modalTitle: {
+        ...Typography.labelLg,
+        color: Colors.textPrimary,
+        marginBottom: 16,
+        textAlign: 'center',
+    },
+    reasonBtn: {
+        padding: 16,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: Colors.border,
+        marginBottom: 12,
+        alignItems: 'center',
+    },
+    reasonText: {
+        ...Typography.labelMd,
+        color: Colors.textPrimary,
+    },
+    cancelModalBtn: {
+        padding: 16,
+        alignItems: 'center',
+        marginTop: 8,
+    },
+    cancelModalText: {
+        ...Typography.labelMd,
+        color: Colors.textSecondary,
     }
 });
