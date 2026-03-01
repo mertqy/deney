@@ -15,7 +15,8 @@ router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
         (SELECT created_at FROM messages WHERE conversation_id = c.id ORDER BY created_at DESC LIMIT 1) as last_message_at
        FROM conversations c
        JOIN matches m ON m.id = c.match_id
-       WHERE m.user_a_id = $1 OR m.user_b_id = $1
+       WHERE (m.user_a_id = $1 OR m.user_b_id = $1)
+       AND m.status = 'confirmed'
        ORDER BY last_message_at DESC NULLS LAST`,
             [req.userId]
         );

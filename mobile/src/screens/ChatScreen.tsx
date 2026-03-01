@@ -36,8 +36,9 @@ export const ChatScreen = ({ navigation, route }: Props) => {
                 }
             });
             socket.on('chat_unmatched', () => {
-                Alert.alert('Bilgi', 'Karşı taraf sohbeti sonlandırdı.');
-                navigation.navigate('Main');
+                Alert.alert('Bilgi', 'Karşı taraf sohbeti sonlandırdı.', [
+                    { text: 'Tamam', onPress: () => navigation.navigate('Main') }
+                ]);
             });
         }
 
@@ -69,14 +70,17 @@ export const ChatScreen = ({ navigation, route }: Props) => {
         try {
             if (type === 'unmatch') {
                 await client.post(`/conversations/${conversationId}/unmatch`, { reason });
-                Alert.alert('Başarılı', 'Eşleşme kaldırıldı.');
+                Alert.alert('Başarılı', 'Eşleşme kaldırıldı.', [
+                    { text: 'Tamam', onPress: () => navigation.navigate('Main') }
+                ]);
             } else {
                 await client.post(`/conversations/${conversationId}/ban`, { reason });
-                Alert.alert('Başarılı', 'Kullanıcı engellendi ve şikayet edildi.');
+                Alert.alert('Başarılı', 'Kullanıcı engellendi ve şikayet edildi.', [
+                    { text: 'Tamam', onPress: () => navigation.navigate('Main') }
+                ]);
             }
-            navigation.navigate('Main');
-        } catch (e) {
-            Alert.alert('Hata', 'İşlem başarısız.');
+        } catch (e: any) {
+            Alert.alert('Hata', e.response?.data?.error || 'İşlem başarısız.');
         }
     };
 
