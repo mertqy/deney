@@ -48,7 +48,7 @@ export const MatchService = {
         if (matchRes.rows.length === 0) throw new Error('Match not found');
 
         const match = matchRes.rows[0];
-        if (match.status !== 'pending' && match.status !== 'a_accepted') {
+        if (match.status !== 'pending' && match.status !== 'a_accepted' && match.status !== 'b_accepted') {
             throw new Error('Match is not in a valid state to accept');
         }
 
@@ -92,7 +92,7 @@ export const MatchService = {
         return updatedMatch;
     },
 
-    async declineMatch(matchId: string, userId: string) {
+    async declineMatch(matchId: string, userId: string, appIo?: Server) {
         const matchRes = await query(`SELECT * FROM matches WHERE id = $1`, [matchId]);
         if (matchRes.rows.length === 0) throw new Error('Match not found');
 
@@ -102,5 +102,11 @@ export const MatchService = {
         }
 
         await query(`UPDATE matches SET status = 'declined' WHERE id = $1`, [match.id]);
+        await query(`UPDATE activity_searches SET status = 'cancelled' WHERE id IN ($1, $2)`, [match.search_a_id, match.search_b_id]);
+
+        if (appIo) {
+            const otherUserId = match.user_a_id === userId ? match.user_b_id : match.user_a_id;
+            appIo.to(otherUserId).emit('match_declined', { matchId: match.id });
+        }
     }
 };

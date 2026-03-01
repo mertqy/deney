@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { useThemeColor } from '../constants/colors';
 import { Typography } from '../constants/typography';
 import { useSocket } from '../hooks/useSocket';
@@ -23,12 +23,21 @@ export const WaitingScreen = ({ navigation, route }: Props) => {
                     navigation.replace('MatchConfirmed', { matchId, conversationId: data.conversationId });
                 }
             });
+            socket.on('match_declined', (data: { matchId: string }) => {
+                if (data.matchId === matchId) {
+                    Alert.alert('Eşleşme İptal Edildi', 'Partnerin eşleşmeyi onaylamadı. Yeni bir arama yapabilirsin.');
+                    navigation.navigate('Main');
+                }
+            });
         }
 
         return () => {
-            if (socket) socket.off('match_confirmed');
+            if (socket) {
+                socket.off('match_confirmed');
+                socket.off('match_declined');
+            }
         };
-    }, [socket]);
+    }, [socket, matchId, navigation]);
 
     return (
         <View style={styles.container}>

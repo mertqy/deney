@@ -29,10 +29,19 @@ export const MatchFoundScreen = ({ navigation, route }: Props) => {
                     navigation.replace('MatchConfirmed', { matchId, conversationId: data.conversationId });
                 }
             });
+            socket.on('match_declined', (data: { matchId: string }) => {
+                if (data.matchId === matchId) {
+                    Alert.alert('Eşleşme İptal Edildi', 'Partnerin eşleşmeyi onaylamadı. Yeni bir arama yapabilirsin.');
+                    navigation.navigate('Main');
+                }
+            });
         }
 
         return () => {
-            if (socket) socket.off('match_confirmed');
+            if (socket) {
+                socket.off('match_confirmed');
+                socket.off('match_declined');
+            }
         };
     }, [socket, matchId, navigation]);
 

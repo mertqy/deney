@@ -64,7 +64,8 @@ router.post('/:id/accept', authenticate, async (req: AuthRequest, res: ExpressRe
 // POST /api/matches/:id/decline
 router.post('/:id/decline', authenticate, async (req: AuthRequest, res: ExpressResponse, next: NextFunction) => {
     try {
-        await MatchService.declineMatch(req.params.id as string, req.userId as string);
+        const io = req.app.get('io');
+        await MatchService.declineMatch(req.params.id as string, req.userId as string, io);
         return res.json({ message: 'Match declined' });
 
     } catch (err: any) {
