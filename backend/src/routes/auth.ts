@@ -93,4 +93,69 @@ router.post('/logout', (_req: Request, res: Response) => {
     return res.json({ message: 'Logged out successfully' });
 });
 
+import { sendVerificationEmail } from '../services/emailService';
+import { authenticate, AuthRequest } from '../middleware/auth';
+
+// POST /api/auth/send-verification
+router.post('/send-verification', authenticate, async (req: AuthRequest, res: Response) => {
+    try {
+        const result = await query('SELECT email, is_verified FROM users WHERE id = $1', [req.userId]);
+        if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+
+        const user = result.rows[0];
+        if (user.is_verified) return res.status(400).json({ error: 'User already verified' });
+
+        const code = Math.floor(10000 + Math.random() * 90000).toString(); // 5 digit
+        const expiresStr = new Date(Date.now() + 15 * 60000).toISOString(); // 15 mins
+
+        await query(
+            'UPDATE users SET email_verification_code = $1, email_verification_expires = $2 WHERE id = $3',
+            [code, expiresStr, req.userId]
+        );
+
+        const emailSent = await sendVerificationEmail(user.email, code);
+        if (!emailSent) {
+            return res.status(500).json({ error: 'Failed to send email' });
+        }
+
+        return res.json({ message: 'Verification code sent' });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// POST /api/auth/verify-email
+router.post('/verify-email', authenticate, async (req: AuthRequest, res: Response) => {
+    const { code } = req.body;
+    if (!code) return res.status(400).json({ error: 'Verification code is required' });
+
+    try {
+        const result = await query(
+            'SELECT email_verification_code, email_verification_expires FROM users WHERE id = $1',
+            [req.userId]
+        );
+        if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+
+        const user = result.rows[0];
+        if (!user.email_verification_code || user.email_verification_code !== code) {
+            return res.status(400).json({ error: 'Invalid verification code' });
+        }
+
+        if (new Date(user.email_verification_expires).getTime() < Date.now()) {
+            return res.status(400).json({ error: 'Verification code has expired' });
+        }
+
+        await query(
+            'UPDATE users SET is_verified = true, trust_score = LEAST(100, trust_score + 20), email_verification_code = NULL, email_verification_expires = NULL WHERE id = $1',
+            [req.userId]
+        );
+
+        return res.json({ message: 'Email verified successfully. You received +20 trust score!' });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 export default router;

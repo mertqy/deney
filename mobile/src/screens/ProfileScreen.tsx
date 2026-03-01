@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator, Alert, Modal, TextInput } from 'react-native';
 import { useThemeColor } from '../constants/colors';
 import { Typography } from '../constants/typography';
 import { useAuth } from '../hooks/AuthContext';
@@ -23,6 +23,43 @@ export const ProfileScreen = () => {
             refreshProfile();
         }, [refreshProfile])
     );
+
+    const [verificationModalVisible, setVerificationModalVisible] = useState(false);
+    const [verificationCode, setVerificationCode] = useState('');
+    const [verificationLoading, setVerificationLoading] = useState(false);
+
+    const handleSendVerification = async () => {
+        try {
+            setVerificationLoading(true);
+            await client.post('/auth/send-verification');
+            Alert.alert('Başarılı', 'Doğrulama kodu e-posta adresinize gönderildi.');
+            setVerificationModalVisible(true);
+        } catch (err: any) {
+            Alert.alert('Hata', err.response?.data?.error || 'Kod gönderilemedi.');
+        } finally {
+            setVerificationLoading(false);
+        }
+    };
+
+    const handleVerifyCode = async () => {
+        if (verificationCode.trim().length !== 5) {
+            Alert.alert('Hata', 'Lütfen 5 haneli kodu girin.');
+            return;
+        }
+
+        try {
+            setVerificationLoading(true);
+            const res = await client.post('/auth/verify-email', { code: verificationCode.trim() });
+            Alert.alert('Başarılı', res.data.message || 'Hesabınız doğrulandı.');
+            setVerificationModalVisible(false);
+            setVerificationCode('');
+            refreshProfile();
+        } catch (err: any) {
+            Alert.alert('Hata', err.response?.data?.error || 'Kod doğrulanamadı.');
+        } finally {
+            setVerificationLoading(false);
+        }
+    };
 
 
 
@@ -81,6 +118,23 @@ export const ProfileScreen = () => {
                         {profile?.bio || 'Henüz bir biyografi eklenmemiş. Profilini düzenleyerek kendini tanıtabilirsin!'}
                     </Text>
                 </View>
+
+                {!profile?.is_verified && (
+                    <TouchableOpacity
+                        style={styles.verifyButton}
+                        onPress={handleSendVerification}
+                        disabled={verificationLoading}
+                    >
+                        {verificationLoading ? (
+                            <ActivityIndicator color={Colors.primary} />
+                        ) : (
+                            <>
+                                <Ionicons name="shield-checkmark" size={20} color={Colors.primary} style={{ marginRight: 8 }} />
+                                <Text style={styles.verifyButtonText}>Hesabını Doğrula & +20 Puan Kazan</Text>
+                            </>
+                        )}
+                    </TouchableOpacity>
+                )}
             </View>
 
             <View style={styles.section}>
@@ -101,7 +155,40 @@ export const ProfileScreen = () => {
                 )}
             </View>
 
+            <Modal visible={verificationModalVisible} transparent animationType="slide">
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Hesap Doğrulama</Text>
+                        <Text style={styles.modalSubtitle}>E-posta adresinize ( {profile?.email} ) gönderilen 5 haneli kodu girin:</Text>
 
+                        <TextInput
+                            style={styles.codeInput}
+                            placeholder="Kod (örn. 12345)"
+                            placeholderTextColor={Colors.textSecondary}
+                            keyboardType="number-pad"
+                            maxLength={5}
+                            value={verificationCode}
+                            onChangeText={setVerificationCode}
+                        />
+
+                        <TouchableOpacity
+                            style={styles.confirmVerifyButton}
+                            onPress={handleVerifyCode}
+                            disabled={verificationLoading}
+                        >
+                            {verificationLoading ? (
+                                <ActivityIndicator color="#fff" />
+                            ) : (
+                                <Text style={styles.confirmVerifyText}>Doğrula</Text>
+                            )}
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.cancelVerifyButton} onPress={() => setVerificationModalVisible(false)}>
+                            <Text style={styles.cancelVerifyText}>Kapat</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
 
             <TouchableOpacity style={styles.logoutButton} onPress={logout}>
                 <Text style={styles.logoutText}>Çıkış Yap</Text>
@@ -237,6 +324,78 @@ const getStyles = (Colors: any) => StyleSheet.create({
     interestLabel: {
         ...Typography.labelSm,
         color: Colors.textPrimary,
+    },
+    verifyButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(108, 92, 231, 0.1)',
+        padding: 16,
+        borderRadius: 16,
+        marginTop: 16,
+        borderWidth: 1,
+        borderColor: 'rgba(108, 92, 231, 0.3)',
+    },
+    verifyButtonText: {
+        ...Typography.labelMd,
+        color: Colors.primary,
+        fontWeight: 'bold',
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        width: '85%',
+        backgroundColor: Colors.bgCard,
+        padding: 24,
+        borderRadius: 24,
+        alignItems: 'center',
+    },
+    modalTitle: {
+        ...Typography.displaySm,
+        color: Colors.textPrimary,
+        marginBottom: 8,
+    },
+    modalSubtitle: {
+        ...Typography.labelMd,
+        color: Colors.textSecondary,
+        textAlign: 'center',
+        marginBottom: 24,
+    },
+    codeInput: {
+        width: '100%',
+        backgroundColor: Colors.bgMain,
+        borderRadius: 16,
+        padding: 16,
+        textAlign: 'center',
+        fontSize: 24,
+        letterSpacing: 8,
+        color: Colors.textPrimary,
+        marginBottom: 24,
+        borderWidth: 1,
+        borderColor: Colors.border,
+    },
+    confirmVerifyButton: {
+        backgroundColor: Colors.primary,
+        width: '100%',
+        padding: 16,
+        borderRadius: 16,
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    confirmVerifyText: {
+        ...Typography.labelLg,
+        color: '#FFF',
+    },
+    cancelVerifyButton: {
+        padding: 12,
+    },
+    cancelVerifyText: {
+        ...Typography.labelMd,
+        color: Colors.textSecondary,
     }
 });
 
