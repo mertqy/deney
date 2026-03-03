@@ -2,7 +2,7 @@
   "expo": {
     "name": "Meetiva",
     "slug": "meetiva",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -26,7 +26,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.tailorastudio.meetiva"
+      "package": "com.tailorastudio.meetiva",
+      "versionCode": 6
     },
     "web": {
       "favicon": "./assets/favicon.png"
