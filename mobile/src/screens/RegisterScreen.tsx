@@ -51,14 +51,14 @@ export const RegisterScreen = ({ navigation }: RegisterProps) => {
             <Text style={styles.subtitle}>Yeni deneyimlere hazır ol.</Text>
 
             <View style={styles.inputContainer}>
-                <TextInput placeholderTextColor={Colors.textSecondary} 
+                <TextInput placeholderTextColor={Colors.textSecondary}
                     style={styles.input}
                     placeholder="Ad Soyad"
                     value={name}
                     onChangeText={setName}
                     autoCapitalize="words"
                 />
-                <TextInput placeholderTextColor={Colors.textSecondary} 
+                <TextInput placeholderTextColor={Colors.textSecondary}
                     style={styles.input}
                     placeholder="E-posta"
                     value={email}
@@ -88,7 +88,7 @@ export const RegisterScreen = ({ navigation }: RegisterProps) => {
                     />
                 )}
 
-                <TextInput placeholderTextColor={Colors.textSecondary} 
+                <TextInput placeholderTextColor={Colors.textSecondary}
                     style={styles.input}
                     placeholder="Şifre"
                     value={password}
@@ -99,6 +99,12 @@ export const RegisterScreen = ({ navigation }: RegisterProps) => {
 
             <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={loading}>
                 {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Kayıt Ol</Text>}
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => navigation.navigate('Legal')} style={{ marginTop: 16 }}>
+                <Text style={styles.legalText}>
+                    Devam ederek <Text style={{ color: Colors.primary, fontWeight: 'bold' }}>Kullanıcı Sözleşmesi</Text> ve <Text style={{ color: Colors.primary, fontWeight: 'bold' }}>KVKK</Text> metnini kabul etmiş sayılırsınız.
+                </Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 20 }}>
@@ -137,8 +143,8 @@ const getStyles = (Colors: any) => StyleSheet.create({
         borderWidth: 1,
         borderColor: Colors.border,
         ...Typography.labelMd,
-    color: Colors.textPrimary,
-},
+        color: Colors.textPrimary,
+    },
     button: {
         backgroundColor: Colors.primary,
         padding: 18,
@@ -153,5 +159,12 @@ const getStyles = (Colors: any) => StyleSheet.create({
         ...Typography.labelMd,
         textAlign: 'center',
         color: Colors.textSecondary,
+    },
+    legalText: {
+        fontSize: 11,
+        color: Colors.textSecondary,
+        textAlign: 'center',
+        lineHeight: 18,
+        paddingHorizontal: 10,
     }
 });

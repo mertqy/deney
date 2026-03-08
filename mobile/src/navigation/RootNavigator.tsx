@@ -10,6 +10,7 @@ import { WaitingScreen } from '../screens/WaitingScreen';
 import { MatchConfirmedScreen } from '../screens/MatchConfirmedScreen';
 import { ChatScreen } from '../screens/ChatScreen';
 import { EditProfileScreen } from '../screens/EditProfileScreen';
+import { LegalScreen } from '../screens/LegalScreen';
 import { useAuth } from '../hooks/AuthContext';
 
 import { ActivityIndicator, View } from 'react-native';
@@ -48,12 +49,14 @@ export const RootNavigator = () => {
                         <Stack.Screen name="MatchConfirmed" component={MatchConfirmedScreen} />
                         <Stack.Screen name="Chat" component={ChatScreen} />
                         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+                        <Stack.Screen name="Legal" component={LegalScreen} />
                     </>
 
                 ) : (
                     <>
                         <Stack.Screen name="Login" component={LoginScreen} />
                         <Stack.Screen name="Register" component={RegisterScreen} />
+                        <Stack.Screen name="Legal" component={LegalScreen} />
                     </>
                 )}
             </Stack.Navigator>

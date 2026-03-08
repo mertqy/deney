@@ -17,18 +17,26 @@ export const TabNavigator = () => {
                 tabBarStyle: {
                     backgroundColor: Colors.bgCard,
                     borderTopColor: Colors.border,
+                    height: 60,
+                    paddingBottom: 8,
+                    paddingTop: 8,
                 },
                 tabBarActiveTintColor: Colors.primary,
                 tabBarInactiveTintColor: Colors.textSecondary,
+                tabBarLabelStyle: {
+                    fontSize: 10,
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase',
+                }
             }}
         >
             <Tab.Screen
                 name="SearchTab"
                 component={SearchScreen}
                 options={{
-                    title: 'Ara',
+                    title: 'Keşfet',
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="search" size={size} color={color} />
+                        <Ionicons name="compass" size={size} color={color} />
                     ),
                 }}
             />
@@ -36,9 +44,9 @@ export const TabNavigator = () => {
                 name="ChatsTab"
                 component={ChatsScreen}
                 options={{
-                    title: 'Sohbetler',
+                    title: 'Sohbet',
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="chatbubbles" size={size} color={color} />
+                        <Ionicons name="chatbubble" size={size} color={color} />
                     ),
                 }}
             />

@@ -37,7 +37,7 @@ export const ActivityGrid = ({ selectedSlug, onSelect }: Props) => {
                             <Ionicons
                                 name={act.icon as any}
                                 size={32}
-                                color={isSelected ? Colors.primary : Colors.accentSoft}
+                                color={isSelected ? '#FFFFFF' : Colors.textSecondary}
                             />
                         </View>
                         <Text style={[styles.label, isSelected && styles.labelSelected]}>
@@ -61,36 +61,38 @@ const getStyles = (Colors: any) => StyleSheet.create({
     card: {
         width: '23%',
         aspectRatio: 0.9,
-        backgroundColor: Colors.bgCardSoft,
-        borderRadius: 18,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 16,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 16,
-        // Soft Shadow
-        shadowColor: '#AF7D61',
-        shadowOpacity: 0.1,
+        shadowColor: 'rgba(0,0,0,0.05)',
+        shadowOpacity: 1,
         shadowRadius: 10,
-        elevation: 3,
+        elevation: 2,
         borderWidth: 1,
-        borderColor: 'rgba(175, 125, 97, 0.05)',
+        borderColor: '#edf2f7',
     },
     cardSelected: {
-        backgroundColor: Colors.bgCard,
+        backgroundColor: Colors.primary,
         borderColor: Colors.primary,
         borderWidth: 1,
-        elevation: 5,
-        shadowOpacity: 0.2,
+        elevation: 4,
+        shadowColor: Colors.primary,
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
     },
     iconContainer: {
         marginBottom: 8,
     },
     label: {
         ...Typography.labelSm,
-        color: Colors.accentSoft,
-        fontSize: 13,
+        color: '#1a202c', // Ensure unselected text is visible on white cards
+        fontSize: 12,
+        fontWeight: 'bold',
     },
     labelSelected: {
-        color: Colors.primary,
+        color: '#FFFFFF',
         fontWeight: 'bold',
     },
 });
