@@ -1,4 +1,4 @@
-# Junto App
+# Meetiva App
 
 Behavior-based dating and activity matching application.
 
