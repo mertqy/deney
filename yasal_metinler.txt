@@ -1,0 +1,27 @@
+MEETİVA YASAL BİLGİLER VE POLİTİKALAR
+
+I. KULLANICI SÖZLEŞMESİ
+
+İşbu Kullanıcı Sözleşmesi, Meetiva dijital platformu üzerinden sunulan hizmetlerden yararlanan tüm gerçek kişilerin (bundan sonra "Kullanıcı" olarak anılacaktır) hak ve yükümlülüklerini belirler.
+
+1. Üyelik Şartları: Kullanıcı, kayıt formunda yer alan bilgilerin doğruluğunu taahhüt eder. Reşit olmayan bireyler platformu kullanamaz.
+2. Fikri Mülkiyet: Meetiva markası, tasarımı ve uygulama içerisindeki tüm yazılımsal kodlar münhasıran platform yönetimine aittir. İzinsiz kopyalanması yasaktır.
+3. Sorumluluk Sınırı: Meetiva, kullanıcılar arasındaki iletişimi kolaylaştıran bir platformdur; kullanıcıların şahsi beyanlarından veya eylemlerinden doğrudan sorumlu tutulamaz.
+
+II. KVKK AYDINLATMA METNİ
+
+6698 Sayılı Kişisel Verilerin Korunması Kanunu uyarınca Veri Sorumlusu sıfatıyla, Meetiva tarafından işlenen kişisel verileriniz hakkında bilgilendirmeyi içerir.
+
+• Veri İşleme Amacı: Kimlik ve iletişim verileriniz, uygulama algoritması üzerinden eşleşme sağlanması ve hizmet kalitesinin optimizasyonu amacıyla işlenmektedir.
+• Veri Saklama: Verileriniz, üyeliğiniz süresince bulut tabanlı şifrelenmiş sunucularda muhafaza edilir ve yasal süresi sonunda anonimleştirilerek imha edilir.
+• Haklarınız: KVKK Madde 11 uyarınca, verilerinizin düzeltilmesini, silinmesini veya işlenip işlenmediği bilgisini talep etme hakkınız saklıdır.
+
+III. GİZLİLİK VE KONUM POLİTİKASI
+
+Konum verileriniz, yalnızca kullanıcı tarafından "Arama" başlatıldığında işleme alınır. Meetiva, arka planda izinsiz konum takibi yapmamaktadır. Arama sonlandırıldığında kesin konum verileriniz sunucularımızdan silinir; yalnızca istatistiksel amaçla bölge verisi tutulur.
+
+Bu belgeler periyodik olarak güncellenebilir. Platformu kullanmaya devam etmeniz, güncel şartları kabul ettiğiniz anlamına gelir.
+
+Hukuki süreçler için: meetiva.destek@gmail.com
+
+Meetiva Hukuk Birimi • v0.0.1
