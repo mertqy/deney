@@ -61,6 +61,10 @@ app.get('/', (req, res) => {
     res.send('Meetiva API is running.'); // Updated name here too
 });
 
+app.get('/yasal', (req, res) => {
+    res.sendFile(__dirname + '/../public/yasal.html');
+});
+
 // Register routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
