@@ -65,6 +65,7 @@ app.get('/yasal', (req, res) => {
     res.sendFile(__dirname + '/../public/yasal.html');
 });
 
+
 // Register routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);

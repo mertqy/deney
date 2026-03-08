@@ -99,7 +99,7 @@ export const SearchScreen = ({ navigation }: Props) => {
         try {
             const payload = {
                 activity_slug: selectedActivity,
-                desired_date: date.toISOString().split('T')[0],
+                desired_date: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`,
                 time_start: formatTime(startTime),
                 time_end: formatTime(endTime),
                 lat: location?.lat || 39.9334,

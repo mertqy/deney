@@ -33,7 +33,13 @@ export async function findMatch(searchId: string, io?: Server) {
     // 3. Find potential candidates
     const candidatesRes = await query(
       `SELECT s.*, u.trust_score, u.expo_push_token,
-        ${HAVERSINE_SQL} as distance
+        (6371 * acos(
+          LEAST(1.0, GREATEST(-1.0, 
+            cos(radians($1)) * cos(radians(s.lat)) * 
+            cos(radians(s.lng) - radians($2)) + 
+            sin(radians($1)) * sin(radians(s.lat))
+          ))
+        )) as distance
        FROM activity_searches s
        JOIN users u ON s.user_id = u.id
        WHERE s.activity_slug = $3
@@ -42,7 +48,13 @@ export async function findMatch(searchId: string, io?: Server) {
          AND s.user_id != $5
          AND u.trust_score >= 20
          AND (s.time_start < $6 AND s.time_end > $7)
-         AND ${HAVERSINE_SQL} <= LEAST(s.radius_km, $8)
+         AND (6371 * acos(
+          LEAST(1.0, GREATEST(-1.0, 
+            cos(radians($1)) * cos(radians(s.lat)) * 
+            cos(radians(s.lng) - radians($2)) + 
+            sin(radians($1)) * sin(radians(s.lat))
+          ))
+        )) <= LEAST(s.radius_km::numeric, $8::numeric)
        ORDER BY distance ASC
        LIMIT 5`,
       [s.lat, s.lng, s.activity_slug, s.desired_date, s.user_id, s.time_end, s.time_start, s.radius_km]

@@ -23,6 +23,19 @@ router.post('/register', async (req: Request, res: Response) => {
         return res.status(400).json({ error: 'name, email, password, birth_date are required' });
     }
 
+    // Backend Age Check: 18+
+    const birth = new Date(birth_date);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+        age--;
+    }
+
+    if (age < 18) {
+        return res.status(400).json({ error: 'Bu uygulamayı kullanmak için en az 18 yaşında olmalısınız.' });
+    }
+
     try {
         const existing = await query('SELECT id FROM users WHERE email = $1', [email]);
         if (existing.rows.length > 0) {

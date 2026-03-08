@@ -69,7 +69,7 @@ export const ProfileScreen = () => {
     }
 
     // Default age if not provided
-    const age = profile?.birth_date ? new Date().getFullYear() - new Date(profile.birth_date).getFullYear() : 29;
+    const age = profile?.birth_date ? new Date().getFullYear() - new Date(profile.birth_date).getFullYear() : null;
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 60, backgroundColor: '#FFF' }} showsVerticalScrollIndicator={false}>
@@ -96,12 +96,14 @@ export const ProfileScreen = () => {
                     </View>
                 </View>
 
-                <Text style={styles.userName}>{profile?.name?.split(' ')[0] || 'İsim'}, {age}</Text>
+                <Text style={styles.userName}>{profile?.name?.split(' ')[0] || 'İsim'}{age ? `, ${age}` : ''}</Text>
 
-                <View style={styles.locationContainer}>
-                    <Ionicons name="location" size={14} color="#718096" style={{ marginRight: 4 }} />
-                    <Text style={styles.locationText}>İstanbul, TR</Text>
-                </View>
+                {profile?.location_city && (
+                    <View style={styles.locationContainer}>
+                        <Ionicons name="location" size={14} color="#718096" style={{ marginRight: 4 }} />
+                        <Text style={styles.locationText}>{profile.location_city}</Text>
+                    </View>
+                )}
 
                 <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('EditProfile')}>
                     <Ionicons name="pencil" size={16} color="#FFF" style={{ marginRight: 8 }} />
@@ -146,7 +148,7 @@ export const ProfileScreen = () => {
             <View style={styles.contentContainer}>
                 <Text style={styles.sectionTitle}>HAKKIMDA</Text>
                 <Text style={styles.bioText}>
-                    {profile?.bio || 'Gündüzleri mimar, geceleri amatör şef. Şehrin gizli mücevherlerini keşfetmeyi, hafta sonu doğa yürüyüşlerini ve vintage caz plaklarını seviyorum. İyi bir sohbetten ve daha iyi bir kahveden anlayan birini arıyorum.'}
+                    {profile?.bio || 'Henüz bir biyografi eklenmemiş.'}
                 </Text>
 
                 <Text style={[styles.sectionTitle, { marginTop: 32 }]}>İLGİ ALANLARI</Text>
@@ -156,13 +158,7 @@ export const ProfileScreen = () => {
                             <Text style={styles.interestPillText}>{interest.label}</Text>
                         </View>
                     )) : (
-                        <>
-                            <View style={styles.interestPill}><Text style={styles.interestPillText}>Architecture</Text></View>
-                            <View style={styles.interestPill}><Text style={styles.interestPillText}>Cooking</Text></View>
-                            <View style={styles.interestPill}><Text style={styles.interestPillText}>Jazz</Text></View>
-                            <View style={styles.interestPill}><Text style={styles.interestPillText}>Hiking</Text></View>
-                            <View style={styles.interestPill}><Text style={styles.interestPillText}>Photography</Text></View>
-                        </>
+                        <Text style={[styles.bioText, { fontSize: 13, color: '#a0aec0' }]}>Henüz ilgi alanı eklenmemiş.</Text>
                     )}
                 </View>
 

@@ -18,7 +18,7 @@ export const RegisterScreen = ({ navigation }: RegisterProps) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [birthDate, setBirthDate] = useState(new Date(2000, 0, 1));
+    const [birthDate, setBirthDate] = useState<Date | null>(null);
     const [showDatePicker, setShowDatePicker] = useState(false);
 
     const [loading, setLoading] = useState(false);
@@ -27,6 +27,19 @@ export const RegisterScreen = ({ navigation }: RegisterProps) => {
     const handleRegister = async () => {
         if (!name || !email || !password || !birthDate) {
             Alert.alert('Hata', 'Lütfen tüm alanları doldurun.');
+            return;
+        }
+
+        // Age check: Must be 18+
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        if (age < 18) {
+            Alert.alert('Yaş Sınırı', 'Uygulamayı kullanabilmek için en az 18 yaşında olmalısınız.');
             return;
         }
 
@@ -71,16 +84,16 @@ export const RegisterScreen = ({ navigation }: RegisterProps) => {
                     onPress={() => setShowDatePicker(true)}
                 >
                     <Text style={{ color: birthDate ? Colors.textPrimary : Colors.textSecondary }}>
-                        {birthDate.toLocaleDateString('tr-TR')}
+                        {birthDate ? birthDate.toLocaleDateString('tr-TR') : 'Doğum Tarihi Seçin'}
                     </Text>
                 </TouchableOpacity>
 
                 {showDatePicker && (
                     <DateTimePicker
-                        value={birthDate}
+                        value={birthDate || new Date(2000, 0, 1)}
                         mode="date"
                         display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                        maximumDate={new Date()} // Can't be born in the future
+                        maximumDate={new Date(new Date().getFullYear() - 13, 11, 31)} // Reasonable max (13+) but we check 18 in code
                         onChange={(event, selectedDate) => {
                             setShowDatePicker(false);
                             if (selectedDate) setBirthDate(selectedDate);

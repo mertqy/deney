@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS matches (
   user_b_id       UUID REFERENCES users(id),
   compat_score    INTEGER,
   status          VARCHAR(20) DEFAULT 'pending'
-                  CHECK (status IN ('pending', 'a_accepted', 'b_accepted', 'confirmed', 'declined', 'expired')),
+                  CHECK (status IN ('pending', 'a_accepted', 'b_accepted', 'confirmed', 'declined', 'expired', 'unmatched', 'banned')),
   a_responded_at  TIMESTAMPTZ,
   b_responded_at  TIMESTAMPTZ,
   expires_at      TIMESTAMPTZ NOT NULL,

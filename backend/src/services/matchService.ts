@@ -102,7 +102,7 @@ export const MatchService = {
         }
 
         await query(`UPDATE matches SET status = 'declined' WHERE id = $1`, [match.id]);
-        await query(`UPDATE activity_searches SET status = 'cancelled' WHERE id IN ($1, $2)`, [match.search_a_id, match.search_b_id]);
+        await query(`UPDATE activity_searches SET status = 'searching' WHERE id IN ($1, $2)`, [match.search_a_id, match.search_b_id]);
 
         if (appIo) {
             const otherUserId = match.user_a_id === userId ? match.user_b_id : match.user_a_id;
